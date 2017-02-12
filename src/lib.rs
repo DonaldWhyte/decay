@@ -1,6 +1,6 @@
 #[doc(hidden)]
 #[macro_export]
-macro_rules! decay {
+macro_rules! decay_type {
     (str) => (String);
     (& str) => (String);
     (& mut str) => (String);
@@ -37,15 +37,15 @@ mod tests {
     fn test_decaying_integral_types_in_struct_definition() {
         #[allow(dead_code)]
         struct IntegralTypeDecay {
-            value: decay!(i32),
-            reference: decay!(&i32),
-            mut_ref: decay!(&mut i32),
-            double_ref: decay!(&&i32),
-            double_mutable_ref: decay!(&&mut i32),
-            static_ref: decay!(&'static i32),
-            static_mutable_ref: decay!(&'static mut i32),
-            double_static_ref: decay!(&&'static i32),
-            double_static_mutable_ref: decay!(&&'static mut i32)
+            value: decay_type!(i32),
+            reference: decay_type!(&i32),
+            mut_ref: decay_type!(&mut i32),
+            double_ref: decay_type!(&&i32),
+            double_mutable_ref: decay_type!(&&mut i32),
+            static_ref: decay_type!(&'static i32),
+            static_mutable_ref: decay_type!(&'static mut i32),
+            double_static_ref: decay_type!(&&'static i32),
+            double_static_mutable_ref: decay_type!(&&'static mut i32)
         }
     }
 
@@ -53,15 +53,15 @@ mod tests {
     fn test_decaying_str_types_in_struct_definition() {
         #[allow(dead_code)]
         struct StrTypeDecay {
-            value: decay!(str),
-            reference: decay!(&str),
-            mut_ref: decay!(&mut str),
-            double_ref: decay!(&&str),
-            double_mutable_ref: decay!(&&mut str),
-            static_ref: decay!(&'static str),
-            static_mutable_ref: decay!(&'static mut str),
-            double_static_ref: decay!(&&'static str),
-            double_static_mutable_ref: decay!(&&'static mut str)
+            value: decay_type!(str),
+            reference: decay_type!(&str),
+            mut_ref: decay_type!(&mut str),
+            double_ref: decay_type!(&&str),
+            double_mutable_ref: decay_type!(&&mut str),
+            static_ref: decay_type!(&'static str),
+            static_mutable_ref: decay_type!(&'static mut str),
+            double_static_ref: decay_type!(&&'static str),
+            double_static_mutable_ref: decay_type!(&&'static mut str)
         }
     }
 
@@ -69,15 +69,15 @@ mod tests {
     fn test_decaying_string_types_in_struct_definition() {
         #[allow(dead_code)]
         struct StringTypeDecay {
-            value: decay!(String),
-            reference: decay!(&String),
-            mut_ref: decay!(&mut String),
-            double_ref: decay!(&&String),
-            double_mutable_ref: decay!(&&mut String),
-            static_ref: decay!(&'static String),
-            static_mutable_ref: decay!(&'static mut String),
-            double_static_ref: decay!(&&'static String),
-            double_static_mutable_ref: decay!(&&'static mut String)
+            value: decay_type!(String),
+            reference: decay_type!(&String),
+            mut_ref: decay_type!(&mut String),
+            double_ref: decay_type!(&&String),
+            double_mutable_ref: decay_type!(&&mut String),
+            static_ref: decay_type!(&'static String),
+            static_mutable_ref: decay_type!(&'static mut String),
+            double_static_ref: decay_type!(&&'static String),
+            double_static_mutable_ref: decay_type!(&&'static mut String)
         }
     }
 
@@ -91,154 +91,154 @@ mod tests {
 
         #[allow(dead_code)]
         struct StructTypeDecay {
-            value: decay!(Person),
-            reference: decay!(&Person),
-            mut_ref: decay!(&mut Person),
-            double_ref: decay!(&&Person),
-            double_mutable_ref: decay!(&&mut Person),
-            static_ref: decay!(&'static Person),
-            static_mutable_ref: decay!(&'static mut Person),
-            double_static_ref: decay!(&&'static Person),
-            double_static_mutable_ref: decay!(&&'static mut Person)
+            value: decay_type!(Person),
+            reference: decay_type!(&Person),
+            mut_ref: decay_type!(&mut Person),
+            double_ref: decay_type!(&&Person),
+            double_mutable_ref: decay_type!(&&mut Person),
+            static_ref: decay_type!(&'static Person),
+            static_mutable_ref: decay_type!(&'static mut Person),
+            double_static_ref: decay_type!(&&'static Person),
+            double_static_mutable_ref: decay_type!(&&'static mut Person)
         }
     }
 
     #[test]
     fn decaying_value_type() {
-        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay!(i32)>());
+        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(i32)>());
     }
 
     #[test]
     fn decaying_ref_type() {
-        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay!(&i32)>());
+        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(&i32)>());
     }
 
     #[test]
     fn decaying_mutable_ref_type() {
-        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay!(&mut i32)>());
+        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(&mut i32)>());
     }
 
     #[test]
     fn decaying_double_ref_type() {
-        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay!(&& i32)>());
+        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(&& i32)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_type() {
-        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay!(&&mut i32)>());
+        assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(&&mut i32)>());
     }
 
     #[test]
     fn decaying_static_reference_type() {
         assert_eq!(
             TypeId::of::<i32>(),
-            TypeId::of::<decay!(&'static i32)>());
+            TypeId::of::<decay_type!(&'static i32)>());
     }
 
     #[test]
     fn decaying_static_mutable_reference_type() {
         assert_eq!(
             TypeId::of::<i32>(),
-            TypeId::of::<decay!(&'static mut i32)>());
+            TypeId::of::<decay_type!(&'static mut i32)>());
     }
 
     #[test]
     fn decaying_double_static_reference_type() {
         assert_eq!(
             TypeId::of::<i32>(),
-            TypeId::of::<decay!(&&'static i32)>());
+            TypeId::of::<decay_type!(&&'static i32)>());
     }
 
     #[test]
     fn decaying_value_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(str)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(str)>());
     }
 
     #[test]
     fn decaying_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&str)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&str)>());
     }
 
     #[test]
     fn decaying_mutable_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&mut str)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&mut str)>());
     }
 
     #[test]
     fn decaying_double_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&& str)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&& str)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&&mut str)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&&mut str)>());
     }
 
     #[test]
     fn decaying_static_reference_str() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&'static str)>());
+            TypeId::of::<decay_type!(&'static str)>());
     }
 
     #[test]
     fn decaying_static_mutable_reference_str() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&'static mut str)>());
+            TypeId::of::<decay_type!(&'static mut str)>());
     }
 
     #[test]
     fn decaying_double_static_reference_str() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&&'static str)>());
+            TypeId::of::<decay_type!(&&'static str)>());
     }
 
     #[test]
     fn decaying_value_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(String)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(String)>());
     }
 
     #[test]
     fn decaying_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&String)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&String)>());
     }
 
     #[test]
     fn decaying_mutable_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&mut String)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&mut String)>());
     }
 
     #[test]
     fn decaying_double_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&& String)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&& String)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay!(&&mut String)>());
+        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&&mut String)>());
     }
 
     #[test]
     fn decaying_static_reference_string() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&'static String)>());
+            TypeId::of::<decay_type!(&'static String)>());
     }
 
     #[test]
     fn decaying_static_mutable_reference_string() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&'static mut String)>());
+            TypeId::of::<decay_type!(&'static mut String)>());
     }
 
     #[test]
     fn decaying_double_static_reference_string() {
         assert_eq!(
             TypeId::of::<String>(),
-            TypeId::of::<decay!(&&'static String)>());
+            TypeId::of::<decay_type!(&&'static String)>());
     }
 
     #[allow(dead_code)]
@@ -249,48 +249,48 @@ mod tests {
 
     #[test]
     fn decaying_value_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay!(Point)>());
+        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(Point)>());
     }
 
     #[test]
     fn decaying_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay!(&Point)>());
+        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&Point)>());
     }
 
     #[test]
     fn decaying_mutable_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay!(&mut Point)>());
+        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&mut Point)>());
     }
 
     #[test]
     fn decaying_double_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay!(&& Point)>());
+        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&& Point)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay!(&&mut Point)>());
+        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&&mut Point)>());
     }
 
     #[test]
     fn decaying_static_reference_struct() {
         assert_eq!(
             TypeId::of::<Point>(),
-            TypeId::of::<decay!(&'static Point)>());
+            TypeId::of::<decay_type!(&'static Point)>());
     }
 
     #[test]
     fn decaying_static_mutable_reference_struct() {
         assert_eq!(
             TypeId::of::<Point>(),
-            TypeId::of::<decay!(&'static mut Point)>());
+            TypeId::of::<decay_type!(&'static mut Point)>());
     }
 
     #[test]
     fn decaying_double_static_reference_struct() {
         assert_eq!(
             TypeId::of::<Point>(),
-            TypeId::of::<decay!(&&'static Point)>());
+            TypeId::of::<decay_type!(&&'static Point)>());
     }
 
 }

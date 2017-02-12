@@ -1,10 +1,10 @@
 [package]
-name = "decay"
+name = "decay_type"
 version = "0.1.0"
 authors = ["Donald Whyte <donaldwhyte0@gmail.com>"]
-repository = "https://github.com/DonaldWhyte/decay"
-homepage = "https://github.com/DonaldWhyte/decay"
-documentation = "https://github.com/DonaldWhyte/decay"
+repository = "https://github.com/DonaldWhyte/decay_type"
+homepage = "https://github.com/DonaldWhyte/decay_type"
+documentation = "https://github.com/DonaldWhyte/decay_type"
 license = "MIT"
 readme = "README.md"
 keywords = [ "type", "decay", "macro", "helper", "development" ]
@@ -14,7 +14,7 @@ categories= [
 description="Macro for decaying Rust types to their simplest value type form"
 
 [lib]
-name = "decay"
+name = "decay_type"
 crate-type = ["dylib"]
 plugin = true
 
