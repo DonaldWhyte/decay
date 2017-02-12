@@ -1,24 +1,29 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! decay_type {
-    (str) => (String);
-    (& str) => (String);
-    (& mut str) => (String);
-    (&& str) => (String);
-    (&& mut str) => (String);
-    (&'static str) => (String);
-    (&'static mut str) => (String);
-    (&&'static str) => (String);
+    // Order matches from least general to most. This is so the more general
+    // matches aren't used when there are more specific mathces available. If
+    // this happens, then the lifetime of the type (e.g. &, &mut) will be
+    // stored in the `typename` arg, meaning the decayed type will still contain
+    // the lifetime (which we want to avoid).
     (&&'static mut str) => (String);
-    ($typename:tt) => ($typename);
-    (& $typename:tt) => ($typename);
-    (& mut $typename:tt) => ($typename);
-    (&& $typename:tt) => ($typename);
-    (&& mut $typename:tt) => ($typename);
-    (&'static $typename:tt) => ($typename);
-    (&'static mut $typename:tt) => ($typename);
-    (&&'static $typename:tt) => ($typename);
-    (&&'static mut $typename:tt) => ($typename);
+    (&&'static str) => (String);
+    (&'static mut str) => (String);
+    (&'static str) => (String);
+    (&& mut str) => (String);
+    (&& str) => (String);
+    (& mut str) => (String);
+    (& str) => (String);
+    (str) => (String);
+    (&&'static mut $($typename:tt)*) => ($($typename)*);
+    (&&'static $($typename:tt)*) => ($($typename)*);
+    (&'static mut $($typename:tt)*) => ($($typename)*);
+    (&'static $($typename:tt)*) => ($($typename)*);
+    (&& mut $($typename:tt)*) => ($($typename)*);
+    (&& $($typename:tt)*) => ($($typename)*);
+    (& mut $($typename:tt)*) => ($($typename)*);
+    (& $($typename:tt)*) => ($($typename)*);
+    ($($typename:tt)*) => ($($typename)*);
 }
 
 #[cfg(test)]
@@ -104,6 +109,53 @@ mod tests {
     }
 
     #[test]
+    fn test_decaying_generic_types_in_struct_definition() {
+        #[allow(dead_code)]
+        struct Foo<T> {
+            value: T
+        }
+
+        #[allow(dead_code)]
+        struct GenericStructTypeDecay {
+            value: decay_type!(Foo<i32>),
+            reference: decay_type!(&Foo<i32>),
+            mut_ref: decay_type!(&mut Foo<i32>),
+            double_ref: decay_type!(&&Foo<i32>),
+            double_mutable_ref: decay_type!(&&mut Foo<i32>),
+            static_ref: decay_type!(&'static Foo<i32>),
+            static_mutable_ref: decay_type!(&'static mut Foo<i32>),
+            double_static_ref: decay_type!(&&'static Foo<i32>),
+            double_static_mutable_ref: decay_type!(&&'static mut Foo<i32>)
+        }
+    }
+
+    #[test]
+    fn test_decaying_nested_generic_types_in_struct_definition() {
+        #[allow(dead_code)]
+        struct Foo<T> {
+            value: T
+        }
+
+        #[allow(dead_code)]
+        struct Bar<T> {
+            value: T
+        }
+
+        #[allow(dead_code)]
+        struct NestedGenericStructTypeDecay {
+            value: decay_type!(Foo<Bar<i32>>),
+            reference: decay_type!(&Foo<Bar<i32>>),
+            mut_ref: decay_type!(&mut Foo<Bar<i32>>),
+            double_ref: decay_type!(&&Foo<Bar<i32>>),
+            double_mutable_ref: decay_type!(&&mut Foo<Bar<i32>>),
+            static_ref: decay_type!(&'static Foo<Bar<i32>>),
+            static_mutable_ref: decay_type!(&'static mut Foo<Bar<i32>>),
+            double_static_ref: decay_type!(&&'static Foo<Bar<i32>>),
+            double_static_mutable_ref: decay_type!(&&'static mut Foo<Bar<i32>>)
+        }
+    }
+
+    #[test]
     fn decaying_value_type() {
         assert_eq!(TypeId::of::<i32>(), TypeId::of::<decay_type!(i32)>());
     }
@@ -161,7 +213,9 @@ mod tests {
 
     #[test]
     fn decaying_mutable_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&mut str)>());
+        assert_eq!(
+            TypeId::of::<String>(),
+            TypeId::of::<decay_type!(&mut str)>());
     }
 
     #[test]
@@ -171,7 +225,9 @@ mod tests {
 
     #[test]
     fn decaying_double_mutable_ref_str() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&&mut str)>());
+        assert_eq!(
+            TypeId::of::<String>(),
+            TypeId::of::<decay_type!(&&mut str)>());
     }
 
     #[test]
@@ -207,17 +263,23 @@ mod tests {
 
     #[test]
     fn decaying_mutable_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&mut String)>());
+        assert_eq!(
+            TypeId::of::<String>(),
+            TypeId::of::<decay_type!(&mut String)>());
     }
 
     #[test]
     fn decaying_double_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&& String)>());
+        assert_eq!(
+            TypeId::of::<String>(),
+            TypeId::of::<decay_type!(&& String)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_string() {
-        assert_eq!(TypeId::of::<String>(), TypeId::of::<decay_type!(&&mut String)>());
+        assert_eq!(
+            TypeId::of::<String>(),
+            TypeId::of::<decay_type!(&&mut String)>());
     }
 
     #[test]
@@ -259,17 +321,24 @@ mod tests {
 
     #[test]
     fn decaying_mutable_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&mut Point)>());
+        assert_eq!(
+            TypeId::of::<Point>(),
+            TypeId::of::<decay_type!(&mut Point)>());
     }
 
     #[test]
     fn decaying_double_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&& Point)>());
+        assert_eq!(
+            TypeId::of::<Point>(),
+            TypeId::of::<decay_type!(&& Point)>());
     }
 
     #[test]
     fn decaying_double_mutable_ref_struct() {
-        assert_eq!(TypeId::of::<Point>(), TypeId::of::<decay_type!(&&mut Point)>());
+        assert_eq!(
+
+            TypeId::of::<Point>(),
+            TypeId::of::<decay_type!(&&mut Point)>());
     }
 
     #[test]
@@ -291,6 +360,128 @@ mod tests {
         assert_eq!(
             TypeId::of::<Point>(),
             TypeId::of::<decay_type!(&&'static Point)>());
+    }
+
+    #[allow(dead_code)]
+    struct Foo<T> {
+        value: T
+    }
+
+    #[allow(dead_code)]
+    struct Bar<T> {
+        value: T
+    }
+
+    #[test]
+    fn decaying_value_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_ref_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_mutable_ref_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&mut Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_double_ref_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&& Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_double_mutable_ref_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&&mut Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_static_reference_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&'static Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_static_mutable_reference_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&'static mut Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_double_static_reference_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<i32>>(),
+            TypeId::of::<decay_type!(&&'static Foo<i32>)>());
+    }
+
+    #[test]
+    fn decaying_value_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_ref_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_mutable_ref_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&mut Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_double_ref_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&& Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_double_mutable_ref_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&&mut Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_static_reference_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&'static Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_static_mutable_reference_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&'static mut Foo<Bar<i32>>)>());
+    }
+
+    #[test]
+    fn decaying_double_static_reference_nested_generic_struct() {
+        assert_eq!(
+            TypeId::of::<Foo<Bar<i32>>>(),
+            TypeId::of::<decay_type!(&&'static Foo<Bar<i32>>)>());
     }
 
 }
