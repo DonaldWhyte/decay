@@ -11,6 +11,7 @@ keywords = [ "type", "decay", "macro", "helper", "development" ]
 categories= [
     "development-tools::procedural-macro-helpers"
 ]
+description="Macro for decaying Rust types to their simplest value type form"
 
 [lib]
 name = "decay"
