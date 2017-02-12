@@ -3,4 +3,9 @@ name = "decay"
 version = "0.1.0"
 authors = ["Donald Whyte <donaldwhyte0@gmail.com>"]
 
+[lib]
+name = "decay"
+crate-type = ["dylib"]
+plugin = true
+
 [dependencies]
