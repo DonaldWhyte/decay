@@ -1,6 +1,6 @@
 [package]
 name = "decay_type"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Donald Whyte <donaldwhyte0@gmail.com>"]
 repository = "https://github.com/DonaldWhyte/decay_type"
 homepage = "https://github.com/DonaldWhyte/decay_type"
